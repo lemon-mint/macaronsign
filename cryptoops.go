@@ -5,11 +5,18 @@ import (
 	"crypto/cipher"
 	"crypto/hmac"
 	"crypto/sha512"
+
+	"github.com/lemon-mint/LEA/golea"
 )
 
 func (s Signer) encrypt(data []byte, nonce []byte) (encrypted []byte) {
 	if s.encV == 1 {
 		b, _ := aes.NewCipher(s.encKey[:])
+		c, _ := cipher.NewGCM(b)
+		return c.Seal(nil, nonce[:12], data, nil)
+	}
+	if s.encV == 2 {
+		b, _ := golea.NewCipher(s.encKey[:])
 		c, _ := cipher.NewGCM(b)
 		return c.Seal(nil, nonce[:12], data, nil)
 	}
@@ -19,6 +26,11 @@ func (s Signer) encrypt(data []byte, nonce []byte) (encrypted []byte) {
 func (s Signer) decrypt(data []byte, nonce []byte) (decrypted []byte, err error) {
 	if s.encV == 1 {
 		b, _ := aes.NewCipher(s.encKey[:])
+		c, _ := cipher.NewGCM(b)
+		return c.Open(nil, nonce[:12], data, nil)
+	}
+	if s.encV == 2 {
+		b, _ := golea.NewCipher(s.encKey[:])
 		c, _ := cipher.NewGCM(b)
 		return c.Open(nil, nonce[:12], data, nil)
 	}
