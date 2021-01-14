@@ -44,5 +44,11 @@ func (s Signer) gensig(data []byte) (sig []byte) {
 		mac.Write(hash[:])
 		sig = mac.Sum(nil)
 	}
+	if s.signV == 2 {
+		hash := sha512.Sum512(data)
+		mac := hmac.New(sha512.New, s.signKey[:])
+		mac.Write(hash[:])
+		sig = mac.Sum(nil)
+	}
 	return
 }
