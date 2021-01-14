@@ -10,6 +10,9 @@ import (
 )
 
 func (s Signer) encrypt(data []byte, nonce []byte) (encrypted []byte) {
+	if s.encV == 0 {
+		return data
+	}
 	if s.encV == 1 {
 		b, _ := aes.NewCipher(s.encKey[:])
 		c, _ := cipher.NewGCM(b)
@@ -24,6 +27,9 @@ func (s Signer) encrypt(data []byte, nonce []byte) (encrypted []byte) {
 }
 
 func (s Signer) decrypt(data []byte, nonce []byte) (decrypted []byte, err error) {
+	if s.encV == 0 {
+		return data, nil
+	}
 	if s.encV == 1 {
 		b, _ := aes.NewCipher(s.encKey[:])
 		c, _ := cipher.NewGCM(b)
