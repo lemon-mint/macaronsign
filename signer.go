@@ -50,3 +50,28 @@ func (s Signer) SignAndEncrypt(data []byte) string {
 	encrypted := s.encrypt(s.signData(s.pack(data)), nonce)
 	return urlsafe.EncodeToString(encrypted) + "." + urlsafe.EncodeToString(nonce)
 }
+
+//DecryptAndVerify : Decrypt data and verify Signature
+func (s Signer) DecryptAndVerify(data string) ([]byte, error) {
+	parts := strings.Split(data, ".")
+	if len(parts) != 2 {
+		return nil, errors.New("encoding error")
+	}
+	nonce, err := urlsafe.DecodeString(parts[1])
+	if err != nil {
+		return nil, err
+	}
+	encrypted, err := urlsafe.DecodeString(parts[0])
+	if err != nil {
+		return nil, err
+	}
+	decrypted, err := s.decrypt(encrypted, nonce)
+	if err != nil {
+		return nil, err
+	}
+	payload, err := s.verifyData(decrypted)
+	if err != nil {
+		return nil, err
+	}
+	return s.unpack(payload)
+}
