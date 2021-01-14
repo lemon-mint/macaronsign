@@ -11,7 +11,7 @@ func (s Signer) encrypt(data []byte, nonce []byte) (encrypted []byte) {
 	if s.encV == 1 {
 		b, _ := aes.NewCipher(s.encKey[:])
 		c, _ := cipher.NewGCM(b)
-		return c.Seal(nil, nonce, data, nil)
+		return c.Seal(nil, nonce[:12], data, nil)
 	}
 	return
 }
@@ -20,7 +20,7 @@ func (s Signer) decrypt(data []byte, nonce []byte) (decrypted []byte, err error)
 	if s.encV == 1 {
 		b, _ := aes.NewCipher(s.encKey[:])
 		c, _ := cipher.NewGCM(b)
-		decrypted, err = c.Open(nil, nonce, data, nil)
+		decrypted, err = c.Open(nil, nonce[:12], data, nil)
 	}
 	return
 }

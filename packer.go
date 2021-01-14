@@ -14,9 +14,11 @@ const signerVersion int = 0
 var urlsafe = base64.RawURLEncoding
 
 func (s Signer) pack(data []byte) []byte {
+	salt := make([]byte, 16)
 	Head, _ := json.Marshal(header{
 		Version: signerVersion,
 		Exp:     s.EXP + time.Now().UTC().Unix(),
+		Salt:    urlsafe.EncodeToString(salt),
 	})
 	sHead := urlsafe.EncodeToString(Head)
 	Body, _ := json.Marshal(payload{

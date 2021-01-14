@@ -12,8 +12,9 @@ type Signer struct {
 }
 
 type header struct {
-	Version int   `json:"version"`
-	Exp     int64 `json:"exp"`
+	Version int    `json:"version"`
+	Exp     int64  `json:"exp"`
+	Salt    string `json:"nonce"`
 }
 
 type payload struct {
