@@ -12,9 +12,8 @@ type Signer struct {
 }
 
 type header struct {
-	Version           int  `json:"version"`
-	Encrypted         bool `json:"e"`
-	EncryptionVersion int  `json:"ev"`
+	Version int   `json:"version"`
+	Exp     int64 `json:"exp"`
 }
 
 type payload struct {
