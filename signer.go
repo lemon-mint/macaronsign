@@ -46,6 +46,9 @@ func (s Signer) verifyData(data []byte) ([]byte, error) {
 //SignAndEncrypt : Signs the input data and returns the encrypted result
 func (s Signer) SignAndEncrypt(data []byte) string {
 	nonce := make([]byte, 16)
+	if s.encV == 3 {
+		nonce = make([]byte, 24)
+	}
 	io.ReadFull(rand.Reader, nonce)
 	encrypted := s.encrypt(s.signData(s.pack(data)), nonce)
 	return urlsafe.EncodeToString(encrypted) + "." + urlsafe.EncodeToString(nonce)
