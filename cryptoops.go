@@ -7,6 +7,7 @@ import (
 	"crypto/sha512"
 
 	"golang.org/x/crypto/chacha20poly1305"
+	"golang.org/x/crypto/sha3"
 
 	"github.com/lemon-mint/LEA/golea"
 )
@@ -53,10 +54,19 @@ func (s Signer) gensig(data []byte) (sig []byte) {
 		mac := hmac.New(sha512.New384, s.signKey[:])
 		mac.Write(hash[:])
 		sig = mac.Sum(nil)
-	}
-	if s.signV == 2 {
+	} else if s.signV == 2 {
 		hash := sha512.Sum512(data)
 		mac := hmac.New(sha512.New, s.signKey[:])
+		mac.Write(hash[:])
+		sig = mac.Sum(nil)
+	} else if s.signV == 3 {
+		hash := sha3.Sum512(data)
+		mac := hmac.New(sha3.New384, s.signKey[:])
+		mac.Write(hash[:])
+		sig = mac.Sum(nil)
+	} else if s.signV == 4 {
+		hash := sha3.Sum512(data)
+		mac := hmac.New(sha3.New512, s.signKey[:])
 		mac.Write(hash[:])
 		sig = mac.Sum(nil)
 	}
