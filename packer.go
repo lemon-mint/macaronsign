@@ -9,12 +9,12 @@ import (
 	"unicode/utf8"
 )
 
-const signerVersion int = 0
+const signerVersion int = 1
 
 var urlsafe = base64.RawURLEncoding
 
 func (s Signer) pack(data []byte) []byte {
-	salt := make([]byte, 16)
+	salt := make([]byte, 8)
 	Head, _ := json.Marshal(header{
 		Version: signerVersion,
 		Exp:     s.EXP + time.Now().UTC().Unix(),
