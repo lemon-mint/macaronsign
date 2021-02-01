@@ -5,6 +5,7 @@ import (
 	"crypto/cipher"
 	"crypto/hmac"
 	"crypto/sha512"
+	"hash"
 
 	"golang.org/x/crypto/chacha20poly1305"
 	"golang.org/x/crypto/sha3"
@@ -81,6 +82,12 @@ func (s Signer) gensig(data []byte) (sig []byte) {
 		hf := blake3.New(256, s.signKey[:])
 		hf.Write(hash[:])
 		sig = hf.Sum(nil)
+	} else if s.signV == 6 {
+		sum := blake3.Sum256(data)
+		hf := blake3.New(256, nil)
+		mac := hmac.New(func() hash.Hash { return hf }, s.signKey[:])
+		mac.Write(sum[:])
+		sig = mac.Sum(nil)
 	}
 	return
 }
