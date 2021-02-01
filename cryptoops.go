@@ -7,6 +7,7 @@ import (
 	"crypto/sha512"
 	"hash"
 
+	"golang.org/x/crypto/blake2b"
 	"golang.org/x/crypto/chacha20poly1305"
 	"golang.org/x/crypto/sha3"
 	"lukechampine.com/blake3"
@@ -88,6 +89,11 @@ func (s Signer) gensig(data []byte) (sig []byte) {
 		mac := hmac.New(func() hash.Hash { return hf }, s.signKey[:])
 		mac.Write(sum[:])
 		sig = mac.Sum(nil)
+	} else if s.signV == 7 {
+		hash := blake2b.Sum256(data)
+		hf, _ := blake2b.New(256, s.signKey[:])
+		hf.Write(hash[:])
+		sig = hf.Sum(nil)
 	}
 	return
 }
