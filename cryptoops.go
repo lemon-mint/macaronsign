@@ -26,6 +26,9 @@ func (s Signer) encrypt(data []byte, nonce []byte) (encrypted []byte) {
 	} else if s.encV == 3 {
 		cipher, _ := chacha20poly1305.NewX(s.encKey[:])
 		return cipher.Seal(nil, nonce[:cipher.NonceSize()], data, nil)
+	} else if s.encV == 4 {
+		cipher, _ := chacha20poly1305.New(s.encKey[:])
+		return cipher.Seal(nil, nonce[:cipher.NonceSize()], data, nil)
 	}
 	return
 }
@@ -43,6 +46,9 @@ func (s Signer) decrypt(data []byte, nonce []byte) (decrypted []byte, err error)
 		return c.Open(nil, nonce[:c.NonceSize()], data, nil)
 	} else if s.encV == 3 {
 		cipher, _ := chacha20poly1305.NewX(s.encKey[:])
+		return cipher.Open(nil, nonce[:cipher.NonceSize()], data, nil)
+	} else if s.encV == 4 {
+		cipher, _ := chacha20poly1305.New(s.encKey[:])
 		return cipher.Open(nil, nonce[:cipher.NonceSize()], data, nil)
 	}
 	return
